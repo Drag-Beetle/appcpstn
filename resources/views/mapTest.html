@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet with Font Awesome</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <style>
+    #map {
+      height: 695px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    // Initialize the map
+    //const map = L.map('map').setView([51.505, -0.09], 13); sample map location
+    const map = L.map('map').setView([9.2111, 123.2767], 13);
+
+    
+
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Define Font Awesome icon
+    const fontAwesomeMarker = L.divIcon({
+      className: 'custom-marker',
+      html: '<i class="fas fa-map-marker-alt fa-2x" style="color:green;"></i>',
+      iconSize: [25, 41],
+      iconAnchor: [12.5, 41],
+    });
+
+    const redMarker = L.AwesomeMarkers.icon({
+  icon: 'coffee', // Font Awesome icon name (e.g., coffee)
+  markerColor: 'red', // Marker color (red, blue, green, orange, purple, etc.)
+  prefix: 'fa', // Font Awesome prefix (fa or fab)
+});
+const blueMarker = L.AwesomeMarkers.icon({
+  icon: 'info-circle',
+  markerColor: 'blue',
+  prefix: 'fa',
+});
+const greenMarker = L.AwesomeMarkers.icon({
+      icon: 'leaf',
+      markerColor: 'green',
+      prefix: 'fa',
+    });
+    const restaurantMarker = L.AwesomeMarkers.icon({
+      icon: 'utensils', // Font Awesome icon for restaurant
+      markerColor: 'orange', // Marker color
+      prefix: 'fa', // Font Awesome prefix
+    });
+
+    // Add marker to the map
+    
+    const sampleMarkers = [
+    { lat: 9.2111, lng: 123.2767, icon: redMarker, popup: "Dauin Public Market" },
+    { lat: 9.2150, lng: 123.2750, icon: blueMarker, popup: "Dauin Church" },
+    { lat: 9.2075, lng: 123.2800, icon: greenMarker, popup: "Apo Island Diving Spot" },
+    { lat: 9.2000, lng: 123.2650, icon: restaurantMarker, popup: "Popular Restaurant" },
+    { lat: 9.2250, lng: 123.2700, icon: fontAwesomeMarker, popup: "Dauin Plaza" }
+]; 
+
+    L.Routing.control({
+    waypoints: [
+        L.latLng(9.2111, 123.2767), // Start Point
+        L.latLng(9.2111, 123.2254)  // End Point
+    ],
+    createMarker: function(i, waypoint, n) {
+        // Use different markers based on waypoint index
+        let markerOptions;
+        if (i === 0) {
+            // First waypoint (start)
+            markerOptions = { icon: redMarker };
+        } else if (i === n - 1) {
+            // Last waypoint (end)
+            markerOptions = { icon: blueMarker };
+        } else {
+            // Intermediate waypoint
+            markerOptions = { icon: greenMarker };
+        }
+
+        // Return the marker with the specified options
+        return L.marker(waypoint.latLng, markerOptions)
+            .bindPopup(i === 0 ? "Start Point" : (i === n - 1 ? "End Point" : "Intermediate Point"));
+    }
+}).addTo(map);
+
+sampleMarkers.forEach(marker => {
+    L.marker([marker.lat, marker.lng], { icon: marker.icon })
+        .bindPopup(marker.popup) // Add a popup to each marker
+        .addTo(map); // Add the marker to the map
+});
+
+  </script>
+</body>
+</html>
