@@ -44,24 +44,27 @@
                 </nav>
             </div>
         
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 relative" x-data="{ open: false }">
                 <!-- Notifications -->
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" class="relative">
+                <div class="relative">
+                    <button @click="open = (open === 'notifications' ? false : 'notifications')" class="relative">
                         🔔
                         @if(auth()->user()->unreadNotifications->count())
                             <span class="absolute top-0 right-0 block w-2.5 h-2.5 rounded-full bg-red-500"></span>
                         @endif
                     </button>
-                    <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded shadow z-50">
+            
+                    <div x-show="open === 'notifications'" @click.outside="open = false" class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded shadow z-50">
                         <div class="p-2">
                             <h4 class="font-bold text-sm mb-2 text-gray-700 dark:text-white">Notifications</h4>
-                            @foreach(auth()->user()->unreadNotifications->take(5) as $note)
+                            @forelse(auth()->user()->unreadNotifications->take(5) as $note)
                                 <a href="{{ $note->data['url'] ?? '#' }}" class="block text-sm text-gray-700 dark:text-gray-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
                                     {{ $note->data['title'] ?? 'Notification' }}
                                     <div class="text-xs text-gray-500">{{ $note->created_at->diffForHumans() }}</div>
                                 </a>
-                            @endforeach
+                            @empty
+                                <div class="text-xs text-gray-400 p-2">No unread notifications</div>
+                            @endforelse
                         </div>
                         <div class="p-2 border-t border-gray-200 dark:border-gray-700">
                             <form action="{{ route('admin.notifications.markAllRead') }}" method="POST">
@@ -71,18 +74,27 @@
                         </div>
                     </div>
                 </div>
-        
-                <!-- Account Settings -->
-                <a href="{{ route('profile.edit') }}"
-                   class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 py-1 rounded text-sm">
-                    {{ Auth::user()->name }}
-                </a>
-        
-                <!-- Logout -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="text-red-500 hover:underline text-sm">Logout</button>
-                </form>
+            
+                <!-- Account Dropdown -->
+                <div class="relative">
+                    <button @click="open = (open === 'account' ? false : 'account')" 
+                        class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 py-1 rounded text-sm">
+                        {{ Auth::user()->name }}
+                    </button>
+            
+                    <div x-show="open === 'account'" @click.outside="open = false" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow z-50">
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
+                            View Profile
+                        </a>
+            
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </header>
 

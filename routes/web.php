@@ -89,6 +89,8 @@ Route::get('/admin/search', [SearchController::class, 'index'])->name('admin.sea
 Route::middleware(['auth'])->prefix('profile')->group(function () {
     Route::get('/', [\App\Http\Controllers\User\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/', [\App\Http\Controllers\User\ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
 });
 
 
