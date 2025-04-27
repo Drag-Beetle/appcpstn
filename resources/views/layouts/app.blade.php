@@ -16,54 +16,39 @@
         <!-- Top Navbar -->
         <header class="bg-white dark:bg-gray-900 text-black dark:text-white shadow p-4 flex justify-between items-center border-b">
             <div class="flex items-center gap-8">
-                <span class="text-xl font-semibold">{{ setting('site_name') ?? 'Dashboard' }}</span>
-
-                <!-- Desktop Navigation -->
-                @if (Auth::check() && Auth::user()->isAdmin())
-    <nav class="hidden md:flex items-center gap-2 text-sm font-medium">
-        @php
-            $navLinks = [
-                ['name' => 'Dashboard', 'href' => '/admin', 'pattern' => 'admin*'],
-                ['name' => 'Places', 'href' => '/places', 'pattern' => 'places*'],
-                ['name' => 'Users', 'href' => '/users', 'pattern' => 'users*'],
-                ['name' => 'Settings', 'href' => '/settings', 'pattern' => 'settings*'],
-            ];
-        @endphp
-
-        @foreach ($navLinks as $link)
-            <a href="{{ $link['href'] }}"
-               class="px-3 py-2 rounded-lg transition-all duration-200 ease-in-out
-                   {{ request()->is($link['pattern']) 
-                       ? 'bg-gray-200 dark:bg-gray-800 text-black dark:text-white' 
-                       : 'hover:bg-gray-200 dark:hover:bg-gray-800 hover:underline underline-offset-4 decoration-gray-400 text-gray-600 dark:text-gray-300' }}">
-                {{ $link['name'] }}
-            </a>
-        @endforeach
-    </nav>
-@endif
-
-                <!-- Mobile Navigation -->
-                @if (Auth::check() && Auth::user()->isAdmin())
-    <div x-data="{ open: false }" class="md:hidden relative">
-        <button @click="open = !open" class="p-2 rounded border dark:border-gray-600">☰</button>
-        <div x-show="open" @click.outside="open = false" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow p-2 z-50">
-            @foreach ($navLinks as $link)
-                <a href="{{ $link['href'] }}"
-                   class="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-sm
-                   {{ request()->is($link['pattern']) 
-                       ? 'bg-gray-200 dark:bg-gray-700 text-black dark:text-white' 
-                       : 'text-gray-700 dark:text-gray-300' }}">
-                    {{ $link['name'] }}
-                </a>
-            @endforeach
-        </div>
-    </div>
-@endif
-
+                <!-- Logo -->
+                <span class="text-xl font-bold">{{ setting('site_name') ?? 'Dashboard' }}</span>
+        
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-2 text-sm font-medium">
+                    @if (Auth::check() && Auth::user()->isAdmin())
+                        @php
+                            $navLinks = [
+                                ['name' => 'Dashboard', 'href' => '/admin', 'pattern' => 'admin*'],
+                                ['name' => 'Places', 'href' => '/places', 'pattern' => 'places*'],
+                                ['name' => 'Users', 'href' => '/users', 'pattern' => 'users*'],
+                                ['name' => 'Settings', 'href' => '/settings', 'pattern' => 'settings*'],
+                            ];
+                        @endphp
+        
+                        @foreach ($navLinks as $link)
+                            <a href="{{ $link['href'] }}"
+                               class="px-3 py-2 rounded-lg transition-all duration-200 ease-in-out
+                                   {{ request()->is($link['pattern']) 
+                                       ? 'bg-gray-200 dark:bg-gray-800 text-black dark:text-white' 
+                                       : 'hover:bg-gray-200 dark:hover:bg-gray-800 hover:underline underline-offset-4 decoration-gray-400 text-gray-600 dark:text-gray-300' }}">
+                                {{ $link['name'] }}
+                            </a>
+                        @endforeach
+                    @endif
+                </nav>
+            </div>
+        
             <div class="flex items-center gap-4">
                 <!-- Notifications -->
                 <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" class="relative">🔔
+                    <button @click="open = !open" class="relative">
+                        🔔
                         @if(auth()->user()->unreadNotifications->count())
                             <span class="absolute top-0 right-0 block w-2.5 h-2.5 rounded-full bg-red-500"></span>
                         @endif
@@ -86,14 +71,17 @@
                         </div>
                     </div>
                 </div>
-
-                <a href="{{ route('profile.edit') }}" 
-   class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 py-1 rounded text-sm">
-   {{ Auth::user()->name }}
-</a>
+        
+                <!-- Account Settings -->
+                <a href="{{ route('profile.edit') }}"
+                   class="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 py-1 rounded text-sm">
+                    {{ Auth::user()->name }}
+                </a>
+        
+                <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button class="text-red-500 hover:underline">Logout</button>
+                    <button class="text-red-500 hover:underline text-sm">Logout</button>
                 </form>
             </div>
         </header>
